@@ -22,13 +22,13 @@ class Action_Handler extends Crayner_Machine
 	}
 	private function chkck($file)
 	{
-		return file_exists($file)?(strpos(file_get_contents($file),'c_user')===false):true;
+		return file_exists($file)?(strpos(file_get_contents($file),'c_user')==false):true;
 	}
 	private function avoid_brute_login()
 	{
 		return file_exists(data.'/avoid_brute_login.txt')?((int)file_get_contents(data.'/avoid_brute_login.txt')<5):true;
 	}
-	private function has_login()
+	 function has_login()
 	{
 		return file_put_contents(data.'/avoid_brute_login.txt',(file_exists(data.'/avoid_brute_login.txt')?((int)file_get_contents(data.'/avoid_brute_login.txt')+1):1));
 	}
@@ -36,7 +36,7 @@ class Action_Handler extends Crayner_Machine
 	{
 		$a = json_decode($this->curl(self::g.$this->tg.'/feed?limit=1&fields=id&access_token='.$this->fb->t),true);
 		if(isset($a['data'][0]['id'])){
-			return substr($a['data'][0]['id'],strpos('_',$a['data'][0]['id'])+1);
+			return substr($a['data'][0]['id'],strpos($a['data'][0]['id'],'_')+1);
 		} else {
 			return false;
 		}
@@ -44,25 +44,34 @@ class Action_Handler extends Crayner_Machine
 	private function gogo($url,$post=null,$op=null)
 	{
 			$a = $this->fb->go_to($url,$post,$op,'all');
+			var_dump($a);
 			if(isset($a[1]['redirect_url']) and !empty($a[1]['redirect_url'])){
 				$a = $this->gogo($a[1]['redirect_url'],$post,$op);
 			}
-			return $a[0];
+			return $a;
 	}
 	private function share($pid)
 	{
-		$a = $this->gogo(Facebook::url.$pid);
-		file_put_contents('aa',$a);
+		/// get share link
+/*		$a = $this->gogo(Facebook::url.$pid);
+		file_put_contents('aa',$a[0]);*/
 		$a = file_get_contents('aa');
-		print $a;
+		$a = explode('href="/composer/mbasic/?c_src=share',$a,2);
+		$a = explode('"',$a[1]);
+		$a = Facebook::url."composer/mbasic/?c_src=share".html_entity_decode($a[0],ENT_QUOTES,'UTF-8');
+		
+		exit();
 	}
 	public function run()
 	{
+		#header('content-type:text/plain');
+		$this->share(1);
 		if($this->chkck($this->fb->ck) and $this->avoid_brute_login()){
-			$this->fb->login();
 			$this->has_login();
+			$a = $this->fb->login();
 		}
 		$data = file_exists(data.'/'.$this->tg.'.txt')?json_decode(file_get_contents(data.'/'.$this->tg.'.txt'),true):array();
+		$data = $data==null?array():$data;
 		$n = $this->getnewpost();
 		if($n!==false and !in_array($n,$data)){
 			$data[] = $n;
@@ -71,6 +80,6 @@ class Action_Handler extends Crayner_Machine
 		} else {
 			$act = "No Action";
 		}
-		print_r($act);
+		print_r($data);
 	}
 }
