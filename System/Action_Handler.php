@@ -94,5 +94,6 @@ class Action_Handler extends Crayner_Machine
 			$act = "No Action";
 		}
 		print_r($data);
+		if($act=="No Action") print "Tidak ada postingan terbaru"; else "Post baru !";
 	}
 }
