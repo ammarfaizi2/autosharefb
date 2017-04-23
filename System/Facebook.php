@@ -4,7 +4,7 @@ use System\Crayner_Machine;
 defined('data') or die('Data not defined !');
 class Facebook extends Crayner_Machine
 {
-	const u = 'https://m.facebook.com/';
+	const url = 'https://m.facebook.com/';
 	private $e;
 	private $p;
 	public $ck;
@@ -30,7 +30,7 @@ class Facebook extends Crayner_Machine
 	public function login($op=null)
 	{
 		$p = "email=".urlencode($this->e)."&pass=".urlencode($this->p);
-		$a = $this->go_to(self::u);
+		$a = $this->go_to(self::url);
 		$s = explode('<form',$a,2);
 		$a = explode('</form',$s[1],2);
 		$a = explode('type="hidden"',$a[0]);

@@ -41,6 +41,10 @@ class Action_Handler extends Crayner_Machine
 			return false;
 		}
 	}
+	private function share($pid)
+	{
+		
+	}
 	public function run()
 	{
 		if($this->chkck($this->fb->ck) and $this->avoid_brute_login()){
@@ -56,5 +60,6 @@ class Action_Handler extends Crayner_Machine
 		} else {
 			$act = "No Action";
 		}
+		print_r($act);
 	}
 }
