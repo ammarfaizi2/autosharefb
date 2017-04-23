@@ -12,9 +12,12 @@ use System\Facebook;
 */
 class Action_Handler extends Crayner_Machine
 {
+	const g = 'https://graph.facebook.com/';
+	private $tg;
 	private $fb;
 	public function __construct($cf)
 	{
+		$this->tg = $cf['target'];
 		$this->fb = new Facebook($cf['email'],$cf['pass'],$cf['user'],$cf['token']);
 	}
 	private function chkck($file)
