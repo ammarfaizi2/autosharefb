@@ -11,11 +11,17 @@ $cf = array(
 'pass'=>'858869123aaa',
 'token'=>''
 );
+
+
+
 /**
 *
+*		Action
 *
 */
 require 'loader.php';
 use System\Action_Handler;
+$app = new Action_Handler($cf);
+$app->run();
 
 
