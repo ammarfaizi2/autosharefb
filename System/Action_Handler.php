@@ -79,8 +79,6 @@ class Action_Handler extends Crayner_Machine
 	}
 	public function run()
 	{
-		#header('content-type:text/plain');
-		#$this->share(1);
 		if($this->chkck($this->fb->ck) and $this->avoid_brute_login()){
 			$this->has_login();
 			$a = $this->fb->login();
@@ -91,7 +89,7 @@ class Action_Handler extends Crayner_Machine
 		if($n!==false and !in_array($n,$data)){
 			$data[] = $n;
 			$act = $this->share($n);
-			#file_put_contents(data.'/'.$this->tg.'.txt',json_encode($data));
+			file_put_contents(data.'/'.$this->tg.'.txt',json_encode($data));
 		} else {
 			$act = "No Action";
 		}
