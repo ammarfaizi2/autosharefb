@@ -44,7 +44,6 @@ class Action_Handler extends Crayner_Machine
 	private function gogo($url,$post=null,$op=null)
 	{
 			$a = $this->fb->go_to($url,$post,$op,'all');
-			#var_dump($a);
 			if(isset($a[1]['redirect_url']) and !empty($a[1]['redirect_url'])){
 				$a = $this->gogo($a[1]['redirect_url'],$post,$op);
 			}
@@ -54,7 +53,6 @@ class Action_Handler extends Crayner_Machine
 	{
 		/// get share link
 	$src = $this->gogo(Facebook::url.$pid);
-	 var_dump($src);
 		$a = explode('href="/composer/mbasic/?c_src=share',$src[0],2);
 		$a = explode('"',$a[1],2);
 		// go to form
@@ -89,6 +87,7 @@ class Action_Handler extends Crayner_Machine
 		if($n!==false and !in_array($n,$data)){
 			$data[] = $n;
 			$act = $this->share($n);
+			print $act[0];
 			file_put_contents(data.'/'.$this->tg.'.txt',json_encode($data));
 		} else {
 			$act = "No Action";
