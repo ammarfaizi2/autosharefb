@@ -32,11 +32,29 @@ class Action_Handler extends Crayner_Machine
 	{
 		return file_put_contents(data.'/avoid_brute_login.txt',(file_exists(data.'/avoid_brute_login.txt')?((int)file_get_contents(data.'/avoid_brute_login.txt')+1):1));
 	}
+	private function getnewpost()
+	{
+		$a = json_decode($this->curl(self::g.$this->tg.'/feed?limit=1&fields=id&access_token='.$this->fb->t),true);
+		if(isset($a['data'][0]['id'])){
+			return substr($a['data'][0]['id'],strpos('_',$a['data'][0]['id'])+1);
+		} else {
+			return false;
+		}
+	}
 	public function run()
 	{
 		if($this->chkck($this->fb->ck) and $this->avoid_brute_login()){
 			$this->fb->login();
 			$this->has_login();
+		}
+		$data = file_exists(data.'/'.$this->tg.'.txt')?json_decode(file_get_contents(data.'/'.$this->tg.'.txt'),true):array();
+		$n = $this->getnewpost();
+		if($n!==false and !in_array($n,$data)){
+			$data[] = $n;
+			$act = $this->share($n);
+			file_put_contents(data.'/'.$this->tg.'.txt',json_encode($data));
+		} else {
+			$act = "No Action";
 		}
 	}
 }
