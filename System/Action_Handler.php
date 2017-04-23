@@ -51,7 +51,10 @@ class Action_Handler extends Crayner_Machine
 	}
 	private function share($pid)
 	{
-	
+		$a = $this->gogo(Facebook::url.$pid);
+		file_put_contents('aa',$a);
+		$a = file_get_contents('aa');
+		print $a;
 	}
 	public function run()
 	{
