@@ -12,10 +12,10 @@ use System\Facebook;
 */
 class Action_Handler extends Crayner_Machine
 {
+	private $fb;
 	public function __construct($cf)
 	{
-		$fb = new Facebook($cf['email'],$cf['pass'],$cf['user'],$cf['token']);
-		$a = $fb->login(array(52=>1));
+		$this->fb = new Facebook($cf['email'],$cf['pass'],$cf['user'],$cf['token']);
 	}
 	private function chkck($file)
 	{
@@ -23,10 +23,17 @@ class Action_Handler extends Crayner_Machine
 	}
 	private function avoid_brute_login()
 	{
-		return file_exists()
+		return file_exists(data.'/avoid_brute_login.txt')?((int)file_get_contents(data.'/avoid_brute_login.txt')<5):true;
+	}
+	private function has_login()
+	{
+		return file_put_contents(data.'/avoid_brute_login.txt',(file_exists(data.'/avoid_brute_login.txt')?((int)file_get_contents(data.'/avoid_brute_login.txt')+1):1));
 	}
 	public function run()
 	{
-		
+		if($this->chkck($this->fb->ck) and $this->avoid_brute_login()){
+			$this->fb->login();
+			$this->has_login();
+		}
 	}
 }
