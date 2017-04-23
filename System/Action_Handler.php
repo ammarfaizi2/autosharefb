@@ -41,9 +41,17 @@ class Action_Handler extends Crayner_Machine
 			return false;
 		}
 	}
+	private function gogo($url,$post=null,$op=null)
+	{
+			$a = $this->fb->go_to($url,$post,$op,'all');
+			if(isset($a[1]['redirect_url']) and !empty($a[1]['redirect_url'])){
+				$a = $this->gogo($a[1]['redirect_url'],$post,$op);
+			}
+			return $a[0];
+	}
 	private function share($pid)
 	{
-		
+	
 	}
 	public function run()
 	{
