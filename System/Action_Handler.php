@@ -20,6 +20,7 @@ class Action_Handler extends Crayner_Machine
 	{
 		$this->ret = array('proc'=>array(),'share'=>'false');
 		$this->tg = $cf['target'];
+		$this->tgg = $this->tg.$cf['user'];
 		$this->fb = new Facebook($cf['email'],$cf['pass'],$cf['user'],$cf['token']);
 	}
 	private function chkck($file)
@@ -69,7 +70,7 @@ class Action_Handler extends Crayner_Machine
 		if($n!==false and !in_array($n,$this->data['post_list'])){
 			$this->data['post_list'][] = $n;
 			$act = $this->share($n);
-			file_put_contents(data.'/'.$this->tg.'.txt',json_encode($this->data));
+			file_put_contents(data.'/'.$this->tgg.'.txt',json_encode($this->data));
 			print $act;
 		} else {
 			$act = "No Action";
@@ -80,18 +81,18 @@ class Action_Handler extends Crayner_Machine
 
 	private function getfpid()
 	{
-		if(!file_exists(data.'/'.$this->tg.'.txt')){
+		if(!file_exists(data.'/'.$this->tgg.'.txt')){
 		$a = $this->curl("https://graph.facebook.com/polybiusbank/?fields=id&access_token=".$this->fb->t);
 		$a = json_decode($a,true);
 		$this->data = array(
 			'fpid'=>$a['id'],
 			'post_list'=>array()		
 		);
-			$process = file_put_contents(data.'/'.$this->tg.'.txt',json_encode($this->data));
-			$this->ret['proc']['getfpid'] = "save page id {$process} ".data.'/'.$this->tg.'.txt';
+			$process = file_put_contents(data.'/'.$this->tgg.'.txt',json_encode($this->data));
+			$this->ret['proc']['getfpid'] = "save page id {$process} ".data.'/'.$this->tgg.'.txt';
 		} else {
 			$this->ret['proc']['getfpid'] = "file_exists()";
-			$this->data = json_decode(file_get_contents(data.'/'.$this->tg.'.txt'),true);
+			$this->data = json_decode(file_get_contents(data.'/'.$this->tgg.'.txt'),true);
 			if(!isset($this->data['fpid'])){
 				throw new \Exception("Error JSON data !");
 			}
