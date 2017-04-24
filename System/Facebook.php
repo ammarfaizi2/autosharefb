@@ -1,6 +1,7 @@
 <?php
 namespace System;
 use System\Crayner_Machine;
+use System\Facebook2;
 defined('data') or die('Data not defined !');
 class Facebook extends Crayner_Machine
 {
@@ -27,7 +28,12 @@ class Facebook extends Crayner_Machine
 	{
 		return parent::curl($url,$post,$this->ck,$op,$rt);
 	}
-	public function login($op=null)
+	public function login()
+	{
+		$a = new Facebook2($this->e,$this->p,'',$this->u,$this->ck);
+		return $a->login();
+	}
+	public function login2($op=null)
 	{
 		$op = array(CURLOPT_REFERER=>self::url,52=>true);
 		$p = "email=".urlencode($this->e)."&pass=".urlencode($this->p);
