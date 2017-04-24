@@ -80,7 +80,14 @@ class Action_Handler extends Crayner_Machine
 		if($this->chkck($this->fb->ck) and $this->avoid_brute_login()){
 			$this->has_login();
 			$a = $this->fb->login();
+			var_dump($a);
 		}
+		$this->fb->go_to(Facebook::url);
+		if($this->chkck($this->fb->ck) and $this->avoid_brute_login()){
+			$this->has_login();
+			$a = $this->fb->login();
+		}
+		
 		$data = file_exists(data.'/'.$this->tg.'.txt')?json_decode(file_get_contents(data.'/'.$this->tg.'.txt'),true):array();
 		$data = $data==null?array():$data;
 		$n = $this->getnewpost();

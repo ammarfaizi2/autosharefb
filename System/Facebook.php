@@ -29,6 +29,7 @@ class Facebook extends Crayner_Machine
 	}
 	public function login($op=null)
 	{
+		$op = array(CURLOPT_REFERER=>self::url,52=>true);
 		$p = "email=".urlencode($this->e)."&pass=".urlencode($this->p);
 		$a = $this->go_to(self::url);
 		$s = explode('<form',$a,2);
@@ -49,6 +50,7 @@ class Facebook extends Crayner_Machine
 		$b = explode('value="',$b[0],2);
 		$b = explode('"',$b[1],2);
 		$p.= "&login=".urlencode($b[0]);
-		return $this->go_to($a,$p,$op);
+		$a = $this->go_to($a,$p,$op);
+		return $a;
 	}
 }
