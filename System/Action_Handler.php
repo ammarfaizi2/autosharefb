@@ -101,7 +101,7 @@ class Action_Handler extends Crayner_Machine
 	{
 			$a = $this->fb->go_to($url,$post,$op,'all');
 			if(isset($a[1]['redirect_url']) and !empty($a[1]['redirect_url'])){
-				$a = $this->gogo($a[1]['redirect_url'],$post,$op);
+				$a = $this->gogo($a[1]['redirect_url'],$post,array(CURLOPT_REFERER=>$a[1]['url']));
 			}
 			return $a;
 	}
