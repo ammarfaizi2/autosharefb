@@ -18,7 +18,7 @@ class Action_Handler extends Crayner_Machine
 	private $fb;
 	public function __construct($cf)
 	{
-		$this->ret = array('proc'=>array());
+		$this->ret = array('proc'=>array(),'share'=>'false');
 		$this->tg = $cf['target'];
 		$this->fb = new Facebook($cf['email'],$cf['pass'],$cf['user'],$cf['token']);
 	}
@@ -37,9 +37,14 @@ class Action_Handler extends Crayner_Machine
 	private function getnewpost()
 	{
 		
-		$a = json_decode($this->curl(self::g.$this->tg.'/feed?limit=1&fields=id&access_token='.$this->fb->t),true);
-		if(isset($a['data'][0]['id'])){
-			return substr($a['data'][0]['id'],strpos($a['data'][0]['id'],'_')+1);
+		$a = json_decode($this->curl(self::g.$this->tg.'/feed?limit=10&fields=id,from&access_token='.$this->fb->t),true);
+		foreach($a['data'] as $key => $qw){
+			if($qw['from']['id']==$this->data['fpid']){
+				$po = $key;
+			}
+		}
+		if(isset($po) and isset($a['data'][$po]['id'])){
+			return substr($a['data'][$po]['id'],strpos($a['data'][$po]['id'],'_')+1);
 		} else {
 			return false;
 		}
@@ -87,14 +92,11 @@ class Action_Handler extends Crayner_Machine
 		} else {
 			$this->ret['proc']['getfpid'] = "file_exists()";
 			$this->data = json_decode(file_get_contents(data.'/'.$this->tg.'.txt'),true);
+			if(!isset($this->data['fpid'])){
+				throw new \Exception("Error JSON data !");
+			}
 		}
 	}
-	
-	
-	
-	
-	
-	
 	private function gogo($url,$post=null,$op=null)
 	{
 			$a = $this->fb->go_to($url,$post,$op,'all');
@@ -127,6 +129,7 @@ class Action_Handler extends Crayner_Machine
 		$ac = explode('action="',$src[0],2);
 		$ac = explode('"',$ac[1],2);
 		$ac = Facebook::url.html_entity_decode($ac[0],ENT_QUOTES,'UTF-8');
+		$this->ret['share'] = 'true';
 		return $this->gogo($ac,$p,array(CURLOPT_REFERER=>$src[1]['url']));
 	}
 	
