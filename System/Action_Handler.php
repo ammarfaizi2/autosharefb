@@ -2,6 +2,7 @@
 namespace System;
 use System\Crayner_Machine;
 use System\Facebook;
+header('content-type:text/plain');
 /**
 *
 *		@author Ammar Faizi <ammarfaizi2@gmail.com>
@@ -17,6 +18,7 @@ class Action_Handler extends Crayner_Machine
 	private $fb;
 	public function __construct($cf)
 	{
+		$this->ret = array('proc'=>array());
 		$this->tg = $cf['target'];
 		$this->fb = new Facebook($cf['email'],$cf['pass'],$cf['user'],$cf['token']);
 	}
@@ -34,6 +36,7 @@ class Action_Handler extends Crayner_Machine
 	}
 	private function getnewpost()
 	{
+		
 		$a = json_decode($this->curl(self::g.$this->tg.'/feed?limit=1&fields=id&access_token='.$this->fb->t),true);
 		if(isset($a['data'][0]['id'])){
 			return substr($a['data'][0]['id'],strpos($a['data'][0]['id'],'_')+1);
@@ -41,6 +44,57 @@ class Action_Handler extends Crayner_Machine
 			return false;
 		}
 	}
+	private function login_act()
+	{
+		if($this->chkck($this->fb->ck) and $this->avoid_brute_login()){
+			$this->has_login();
+			$a = $this->fb->login();
+			$this->ret['proc']['login'][] = "do login";
+		} else {
+			$this->ret['proc']['login'][] = "have login";
+		}
+	}
+	public function run()
+	{
+		$this->getfpid();
+	 $this->login_act();
+		$this->fb->go_to(Facebook::url);
+		$this->login_act();
+		$n = $this->getnewpost();
+		if($n!==false and !in_array($n,$this->data['post_list'])){
+			$this->data['post_list'][] = $n;
+			$act = $this->share($n);
+			file_put_contents(data.'/'.$this->tg.'.txt',json_encode($this->data));
+			print $act;
+		} else {
+			$act = "No Action";
+		}
+		print_r($this->ret);
+		if($act=="No Action") print "Tidak ada postingan terbaru"; else print "Post baru !";
+	}
+
+	private function getfpid()
+	{
+		if(!file_exists(data.'/'.$this->tg.'.txt')){
+		$a = $this->curl("https://graph.facebook.com/polybiusbank/?fields=id&access_token=".$this->fb->t);
+		$a = json_decode($a,true);
+		$this->data = array(
+			'fpid'=>$a['id'],
+			'post_list'=>array()		
+		);
+			$process = file_put_contents(data.'/'.$this->tg.'.txt',json_encode($this->data));
+			$this->ret['proc']['getfpid'] = "save page id {$process} ".data.'/'.$this->tg.'.txt';
+		} else {
+			$this->ret['proc']['getfpid'] = "file_exists()";
+			$this->data = json_decode(file_get_contents(data.'/'.$this->tg.'.txt'),true);
+		}
+	}
+	
+	
+	
+	
+	
+	
 	private function gogo($url,$post=null,$op=null)
 	{
 			$a = $this->fb->go_to($url,$post,$op,'all');
@@ -75,31 +129,5 @@ class Action_Handler extends Crayner_Machine
 		$ac = Facebook::url.html_entity_decode($ac[0],ENT_QUOTES,'UTF-8');
 		return $this->gogo($ac,$p,array(CURLOPT_REFERER=>$src[1]['url']));
 	}
-	public function run()
-	{
-		if($this->chkck($this->fb->ck) and $this->avoid_brute_login()){
-			$this->has_login();
-			$a = $this->fb->login();
-			var_dump($a);
-		}
-		$this->fb->go_to(Facebook::url);
-		if($this->chkck($this->fb->ck) and $this->avoid_brute_login()){
-			$this->has_login();
-			$a = $this->fb->login();
-		}
-		
-		$data = file_exists(data.'/'.$this->tg.'.txt')?json_decode(file_get_contents(data.'/'.$this->tg.'.txt'),true):array();
-		$data = $data==null?array():$data;
-		$n = $this->getnewpost();
-		if($n!==false and !in_array($n,$data)){
-			$data[] = $n;
-			$act = $this->share($n);
-			print $act[0];
-			file_put_contents(data.'/'.$this->tg.'.txt',json_encode($data));
-		} else {
-			$act = "No Action";
-		}
-		print_r($data);
-		if($act=="No Action") print "Tidak ada postingan terbaru"; else "Post baru !";
-	}
+	
 }

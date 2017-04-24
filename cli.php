@@ -6,9 +6,9 @@
 *
 */
 $cf = array(
-'email'=>'aldinino2212@gmail.com',
+'email'=>'ammarfaizi2',
 'user'=>'dikutzart',
-'pass'=>'dikuter12345',
+'pass'=>'triosemut123',
 'token'=>'EAABwzLixnjYBAG0TtzhSNLwVED4puOzCZBlCsf6UQh480ZB8INTXZAfIpgeFZBgm5ZCqrUAMN0ZBjxthQZBkHrcLrH60zZAxvT14NiMMcJeKhx2jg9BtKzRSaGfjQgO8FljulrfZB5QWbGdBl1rdD3s34z89oUgNgL0JTvkPpqBANmQZDZD',
 'target'=>'polybiusbank'
 );
